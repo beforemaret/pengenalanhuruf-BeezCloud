@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belajar Huruf ABC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .dotted-letter {
+            stroke: #94a3b8;
+            stroke-width: 3;
+            stroke-dasharray: 8,4;
+            fill: none;
+            opacity: 0.7;
+        }
+        .solid-letter {
+            stroke: #1e40af;
+            stroke-width: 4;
+            fill: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .letter-container:hover .solid-letter {
+            opacity: 1;
+        }
+        .nav-button {
+            transition: all 0.3s ease;
+        }
+        .nav-button:hover {
+            transform: scale(1.05);
+        }
+        .example-card {
+            transition: transform 0.3s ease;
+        }
+        .example-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-800 mb-2">🎓 Belajar Huruf ABC</h1>
+            <p class="text-gray-600">Belajar menulis huruf dengan cara yang menyenangkan!</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+            <div id="letterNav" class="flex flex-wrap justify-center gap-2">
+                <!-- Navigation buttons will be generated here -->
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-6xl mx-auto">
+            <div id="letterContent" class="bg-white rounded-2xl shadow-xl p-8">
+                <!-- Letter content will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const letterData = {
+            'A': {
+                name: 'A',
+                examples: [
+                    { name: 'Apel', emoji: '🍎', type: 'buah' },
+                    { name: 'Ayam', emoji: '🐔', type: 'hewan' },
+                    { name: 'Anggur', emoji: '🍇', type: 'buah' }
+                ],
+                path: 'M 50 150 L 100 50 L 150 150 M 75 100 L 125 100'
+            },
+            'B': {
+                name: 'B',
+                examples: [
+                    { name: 'Bebek', emoji: '🦆', type: 'hewan' },
+                    { name: 'Bunga', emoji: '🌸', type: 'tanaman' },
+                    { name: 'Belimbing', emoji: '⭐', type: 'buah' }
+                ],
+                path: 'M 50 50 L 50 150 M 50 50 L 120 50 Q 140 50 140 75 Q 140 100 120 100 L 50 100 M 50 100 L 125 100 Q 145 100 145 125 Q 145 150 125 150 L 50 150'
+            },
+            'C': {
+                name: 'C',
+                examples: [
+                    { name: 'Cacing', emoji: '🪱', type: 'hewan' },
+                    { name: 'Ceri', emoji: '🍒', type: 'buah' },
+                    { name: 'Cemara', emoji: '🌲', type: 'tanaman' }
+                ],
+                path: 'M 140 75 Q 140 50 115 50 Q 90 50 90 75 L 90 125 Q 90 150 115 150 Q 140 150 140 125'
+            },
+            'D': {
+                name: 'D',
+                examples: [
+                    { name: 'Domba', emoji: '🐑', type: 'hewan' },
+                    { name: 'Durian', emoji: '🥥', type: 'buah' },
+                    { name: 'Daun', emoji: '🍃', type: 'tanaman' }
+                ],
+                path: 'M 50 50 L 50 150 M 50 50 L 115 50 Q 145 50 145 100 Q 145 150 115 150 L 50 150'
+            },
+            'E': {
+                name: 'E',
+                examples: [
+                    { name: 'Elang', emoji: '🦅', type: 'hewan' },
+                    { name: 'Edelweis', emoji: '🌼', type: 'tanaman' },
+                    { name: 'Enau', emoji: '🌴', type: 'tanaman' }
+                ],
+                path: 'M 50 50 L 50 150 M 50 50 L 130 50 M 50 100 L 120 100 M 50 150 L 130 150'
+            },
+            'F': {
+                name: 'F',
+                examples: [
+                    { name: 'Flamingo', emoji: '🦩', type: 'hewan' },
+                    { name: 'Ficus', emoji: '🌿', type: 'tanaman' },
+                    { name: 'Frangipani', emoji: '🌺', type: 'tanaman' }
+                ],
+                path: 'M 50 50 L 50 150 M 50 50 L 130 50 M 50 100 L 120 100'
+            },
+            'G': {
+                name: 'G',
+                examples: [
+                    { name: 'Gajah', emoji: '🐘', type: 'hewan' },
+                    { name: 'Gandum', emoji: '🌾', type: 'tanaman' },
+                    { name: 'Guava', emoji: '🥭', type: 'buah' }
+                ],
+                path: 'M 140 75 Q 140 50 115 50 Q 90 50 90 75 L 90 125 Q 90 150 115 150 L 125 150 L 125 115 L 110 115'
+            },
+            'H': {
+                name: 'H',
+                examples: [
+                    { name: 'Harimau', emoji: '🐅', type: 'hewan' },
+                    { name: 'Hibiscus', emoji: '🌺', type: 'tanaman' },
+                    { name: 'Hutan', emoji: '🌳', type: 'tanaman' }
+                ],
+                path: 'M 50 50 L 50 150 M 130 50 L 130 150 M 50 100 L 130 100'
+            },
+            'I': {
+                name: 'I',
+                examples: [
+                    { name: 'Iguana', emoji: '🦎', type: 'hewan' },
+                    { name: 'Iris', emoji: '🌷', type: 'tanaman' },
+                    { name: 'Ikan', emoji: '🐟', type: 'hewan' }
+                ],
+                path: 'M 70 50 L 110 50 M 90 50 L 90 150 M 70 150 L 110 150'
+            },
+            'J': {
+                name: 'J',
+                examples: [
+                    { name: 'Jerapah', emoji: '🦒', type: 'hewan' },
+                    { name: 'Jambu', emoji: '🍑', type: 'buah' },
+                    { name: 'Jagung', emoji: '🌽', type: 'tanaman' }
+                ],
+                path: 'M 70 50 L 130 50 M 110 50 L 110 130 Q 110 150 90 150 Q 70 150 70 130'
+            },
+            'K': {
+                name: 'K',
+                examples: [
+                    { name: 'Kucing', emoji: '🐱', type: 'hewan' },
+                    { name: 'Kelapa', emoji: '🥥', type: 'buah' },
+                    { name: 'Kaktus', emoji: '🌵', type: 'tanaman' }
+                ],
+                path: 'M 50 50 L 50 150 M 50 100 L 130 50 M 50 100 L 130 150'
+            },
+            'L': {
+                name: 'L',
+                examples: [
+                    { name: 'Lebah', emoji: '🐝', type: 'hewan' },
+                    { name: 'Lemon', emoji: '🍋', type: 'buah' },
+                    { name: 'Lavender', emoji: '💜', type: 'tanaman' }
+                ],
+                path: 'M 50 50 L 50 150 L 130 150'
+            },
+            'M': {
+                name: 'M',
+                examples: [
+                    { name: 'Monyet', emoji: '🐒', type: 'hewan' },
+                    { name: 'Mangga', emoji: '🥭', type: 'buah' },
+                    { name: 'Mawar', emoji: '🌹', type: 'tanaman' }
+                ],
+                path: 'M 50 150 L 50 50 L 90 100 L 130 50 L 130 150'
+            },
+            'N': {
+                name: 'N',
+                examples: [
+                    { name: 'Nyamuk', emoji: '🦟', type: 'hewan' },
+                    { name: 'Nanas', emoji: '🍍', type: 'buah' },
+                    { name: 'Nangka', emoji: '🥭', type: 'buah' }
+                ],
+                path: 'M 50 150 L 50 50 L 130 150 L 130 50'
+            },
+            'O': {
+                name: 'O',
+                examples: [
+                    { name: 'Orang Utan', emoji: '🦧', type: 'hewan' },
+                    { name: 'Oksigen', emoji: '🌿', type: 'tanaman' },
+                    { name: 'Okra', emoji: '🥒', type: 'tanaman' }
+                ],
+                path: 'M 90 50 Q 130 50 130 100 Q 130 150 90 150 Q 50 150 50 100 Q 50 50 90 50'
+            },
+            'P': {
+                name: 'P',
+                examples: [
+                    { name: 'Panda', emoji: '🐼', type: 'hewan' },
+                    { name: 'Pisang', emoji: '🍌', type: 'buah' },
+                    { name: 'Padi', emoji: '🌾', type: 'tanaman' }
+                ],
+                path: 'M 50 150 L 50 50 L 120 50 Q 140 50 140 75 Q 140 100 120 100 L 50 100'
+            },
+            'Q': {
+                name: 'Q',
+                examples: [
+                    { name: 'Quail', emoji: '🐦', type: 'hewan' },
+                    { name: 'Quinoa', emoji: '🌾', type: 'tanaman' },
+                    { name: 'Qurma', emoji: '🫐', type: 'buah' }
+                ],
+                path: 'M 90 50 Q 130 50 130 100 Q 130 150 90 150 Q 50 150 50 100 Q 50 50 90 50 M 115 125 L 135 145'
+            },
+            'R': {
+                name: 'R',
+                examples: [
+                    { name: 'Rusa', emoji: '🦌', type: 'hewan' },
+                    { name: 'Rambutan', emoji: '🔴', type: 'buah' },
+                    { name: 'Rotan', emoji: '🌿', type: 'tanaman' }
+                ],
+                path: 'M 50 150 L 50 50 L 120 50 Q 140 50 140 75 Q 140 100 120 100 L 50 100 M 90 100 L 130 150'
+            },
+            'S': {
+                name: 'S',
+                examples: [
+                    { name: 'Singa', emoji: '🦁', type: 'hewan' },
+                    { name: 'Semangka', emoji: '🍉', type: 'buah' },
+                    { name: 'Sawi', emoji: '🥬', type: 'tanaman' }
+                ],
+                path: 'M 130 75 Q 130 50 105 50 Q 80 50 80 75 Q 80 100 105 100 Q 130 100 130 125 Q 130 150 105 150 Q 80 150 80 125'
+            },
+            'T': {
+                name: 'T',
+                examples: [
+                    { name: 'Tupai', emoji: '🐿️', type: 'hewan' },
+                    { name: 'Tomat', emoji: '🍅', type: 'buah' },
+                    { name: 'Tebu', emoji: '🎋', type: 'tanaman' }
+                ],
+                path: 'M 50 50 L 130 50 M 90 50 L 90 150'
+            },
+            'U': {
+                name: 'U',
+                examples: [
+                    { name: 'Ular', emoji: '🐍', type: 'hewan' },
+                    { name: 'Ubi', emoji: '🍠', type: 'buah' },
+                    { name: 'Umbi', emoji: '🥔', type: 'tanaman' }
+                ],
+                path: 'M 50 50 L 50 125 Q 50 150 75 150 Q 100 150 100 125 L 100 50'
+            },
+            'V': {
+                name: 'V',
+                examples: [
+                    { name: 'Vicuna', emoji: '🦙', type: 'hewan' },
+                    { name: 'Vanili', emoji: '🌿', type: 'tanaman' },
+                    { name: 'Violet', emoji: '💜', type: 'tanaman' }
+                ],
+                path: 'M 50 50 L 90 150 L 130 50'
+            },
+            'W': {
+                name: 'W',
+                examples: [
+                    { name: 'Walabi', emoji: '🦘', type: 'hewan' },
+                    { name: 'Wijen', emoji: '🌾', type: 'tanaman' },
+                    { name: 'Wortel', emoji: '🥕', type: 'tanaman' }
+                ],
+                path: 'M 40 50 L 60 150 L 80 100 L 100 150 L 120 50'
+            },
+            'X': {
+                name: 'X',
+                examples: [
+                    { name: 'Xerus', emoji: '🐿️', type: 'hewan' },
+                    { name: 'Xanthium', emoji: '🌿', type: 'tanaman' },
+                    { name: 'Xylem', emoji: '🌳', type: 'tanaman' }
+                ],
+                path: 'M 50 50 L 130 150 M 130 50 L 50 150'
+            },
+            'Y': {
+                name: 'Y',
+                examples: [
+                    { name: 'Yak', emoji: '🐂', type: 'hewan' },
+                    { name: 'Yakon', emoji: '🥔', type: 'buah' },
+                    { name: 'Yucca', emoji: '🌿', type: 'tanaman' }
+                ],
+                path: 'M 50 50 L 90 100 L 130 50 M 90 100 L 90 150'
+            },
+            'Z': {
+                name: 'Z',
+                examples: [
+                    { name: 'Zebra', emoji: '🦓', type: 'hewan' },
+                    { name: 'Zaitun', emoji: '🫒', type: 'buah' },
+                    { name: 'Zinnia', emoji: '🌻', type: 'tanaman' }
+                ],
+                path: 'M 50 50 L 130 50 L 50 150 L 130 150'
+            }
+        };
+
+        let currentLetter = 'A';
+
+        function createNavigation() {
+            const nav = document.getElementById('letterNav');
+            const letters = Object.keys(letterData);
+            
+            letters.forEach(letter => {
+                const button = document.createElement('button');
+                button.className = 'nav-button w-12 h-12 rounded-full bg-blue-500 text-white font-bold text-lg hover:bg-blue-600 shadow-lg';
+                button.textContent = letter;
+                button.onclick = () => showLetter(letter);
+                nav.appendChild(button);
+            });
+        }
+
+        function showLetter(letter) {
+            currentLetter = letter;
+            const data = letterData[letter];
+            const content = document.getElementById('letterContent');
+            
+            // Update navigation active state
+            document.querySelectorAll('.nav-button').forEach(btn => {
+                btn.className = btn.textContent === letter 
+                    ? 'nav-button w-12 h-12 rounded-full bg-purple-600 text-white font-bold text-lg shadow-lg transform scale-110'
+                    : 'nav-button w-12 h-12 rounded-full bg-blue-500 text-white font-bold text-lg hover:bg-blue-600 shadow-lg';
+            });
+
+            content.innerHTML = `
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Left Side: Letter Practice -->
+                    <div class="space-y-6">
+                        <div class="text-center">
+                            <h2 class="text-6xl font-bold text-purple-700 mb-2">${letter}</h2>
+                            <p class="text-gray-600">Huruf ${letter}</p>
+                        </div>
+                        
+                        <!-- Letter Tracing -->
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-4">✏️ Latihan Menulis</h3>
+                            
+                            <!-- Guide Letter -->
+                            <div class="letter-container bg-white rounded-lg p-4 border-2 border-dashed border-gray-300 mb-4">
+                                <svg width="200" height="200" viewBox="0 0 200 200" class="mx-auto">
+                                    <path d="${data.path}" class="dotted-letter"/>
+                                    <path d="${data.path}" class="solid-letter"/>
+                                </svg>
+                                <p class="text-center text-sm text-gray-500 mt-2">Contoh bentuk huruf ${letter}</p>
+                            </div>
+
+                            <!-- Interactive Writing Area -->
+                            <div class="bg-white rounded-lg p-4 border-2 border-blue-300">
+                                <div class="flex justify-between items-center mb-3">
+                                    <p class="text-sm font-medium text-gray-700">Tulis huruf ${letter} di sini:</p>
+                                    <button onclick="clearCanvas()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium">
+                                        🗑️ Hapus
+                                    </button>
+                                </div>
+                                <canvas 
+                                    id="writingCanvas" 
+                                    width="300" 
+                                    height="200" 
+                                    class="border-2 border-gray-200 rounded-lg mx-auto block cursor-crosshair bg-yellow-50"
+                                    style="touch-action: none;"
+                                ></canvas>
+                                <p class="text-center text-xs text-gray-500 mt-2">Gunakan mouse atau jari untuk menulis</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Examples -->
+                    <div class="space-y-6">
+                        <div class="text-center">
+                            <h3 class="text-2xl font-semibold text-gray-800 mb-4">🎯 Contoh Kata</h3>
+                            <p class="text-gray-600">Kata-kata yang dimulai dengan huruf ${letter}</p>
+                        </div>
+                        
+                        <div class="grid gap-4">
+                            ${data.examples.map(example => `
+                                <div class="example-card bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 border border-yellow-200 shadow-md">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="text-4xl">${example.emoji}</div>
+                                        <div class="flex-1">
+                                            <h4 class="text-2xl font-bold text-gray-800">${example.name}</h4>
+                                            <span class="inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                                                example.type === 'hewan' ? 'bg-green-100 text-green-800' :
+                                                example.type === 'buah' ? 'bg-red-100 text-red-800' :
+                                                'bg-blue-100 text-blue-800'
+                                            }">
+                                                ${example.type}
+                                            </span>
+                                        </div>
+                                        <button onclick="playSound('${example.name}')" class="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full transition-all hover:scale-110 shadow-lg">
+                                            🔊
+                                        </button>
+                                        <div class="text-4xl font-bold text-purple-600">${letter}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <!-- Navigation Arrows -->
+                        <div class="flex justify-between mt-8">
+                            <button onclick="previousLetter()" class="flex items-center space-x-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-full font-semibold transition-all">
+                                <span>←</span>
+                                <span>Sebelumnya</span>
+                            </button>
+                            <button onclick="nextLetter()" class="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-semibold transition-all">
+                                <span>Selanjutnya</span>
+                                <span>→</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Re-initialize canvas after content update
+            setTimeout(initCanvas, 100);
+        }
+
+        function nextLetter() {
+            const letters = Object.keys(letterData);
+            const currentIndex = letters.indexOf(currentLetter);
+            const nextIndex = (currentIndex + 1) % letters.length;
+            showLetter(letters[nextIndex]);
+        }
+
+        function previousLetter() {
+            const letters = Object.keys(letterData);
+            const currentIndex = letters.indexOf(currentLetter);
+            const prevIndex = currentIndex === 0 ? letters.length - 1 : currentIndex - 1;
+            showLetter(letters[prevIndex]);
+        }
+
+        // Canvas drawing functionality
+        let isDrawing = false;
+        let canvas, ctx;
+
+        function initCanvas() {
+            canvas = document.getElementById('writingCanvas');
+            if (!canvas) return;
+            
+            ctx = canvas.getContext('2d');
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            // Mouse events
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+
+            // Touch events for mobile
+            canvas.addEventListener('touchstart', handleTouch);
+            canvas.addEventListener('touchmove', handleTouch);
+            canvas.addEventListener('touchend', stopDrawing);
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
+                                            e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        function clearCanvas() {
+            if (ctx) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        // Sound functionality with improved quality
+        let availableVoices = [];
+        
+        function loadVoices() {
+            availableVoices = speechSynthesis.getVoices();
+        }
+
+        function getBestVoice() {
+            // Priority order for voice selection
+            const voicePriorities = [
+                // Indonesian voices
+                voice => voice.lang === 'id-ID' && voice.name.includes('Google'),
+                voice => voice.lang === 'id-ID' && voice.name.includes('Microsoft'),
+                voice => voice.lang === 'id-ID',
+                // Malay voices (similar to Indonesian)
+                voice => voice.lang === 'ms-MY',
+                // High quality English voices as fallback
+                voice => voice.lang === 'en-US' && voice.name.includes('Google'),
+                voice => voice.lang === 'en-US' && voice.name.includes('Microsoft'),
+                voice => voice.lang === 'en-GB' && voice.name.includes('Google'),
+                // Any available voice
+                voice => true
+            ];
+
+            for (const priority of voicePriorities) {
+                const voice = availableVoices.find(priority);
+                if (voice) return voice;
+            }
+            return null;
+        }
+
+        function playSound(word) {
+            if ('speechSynthesis' in window) {
+                // Stop any currently playing speech
+                speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(word);
+                
+                // Get the best available voice
+                const bestVoice = getBestVoice();
+                if (bestVoice) {
+                    utterance.voice = bestVoice;
+                    console.log(`Using voice: ${bestVoice.name} (${bestVoice.lang})`);
+                }
+                
+                // Optimize settings for clarity and child-friendliness
+                utterance.lang = bestVoice?.lang || 'id-ID';
+                utterance.rate = 0.7; // Slower for better clarity
+                utterance.pitch = 1.1; // Slightly higher pitch for children
+                utterance.volume = 1.0; // Maximum volume for clarity
+                
+                // Add error handling
+                utterance.onerror = function(event) {
+                    console.error('Speech synthesis error:', event.error);
+                    // Fallback: show word visually
+                    showWordVisually(word);
+                };
+                
+                utterance.onstart = function() {
+                    console.log(`Speaking: ${word}`);
+                };
+                
+                speechSynthesis.speak(utterance);
+            } else {
+                // Fallback for browsers that don't support speech synthesis
+                showWordVisually(word);
+            }
+        }
+
+        function showWordVisually(word) {
+            // Create a temporary visual feedback when audio fails
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce';
+            notification.innerHTML = `🔊 ${word}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 2000);
+        }
+
+        // Load voices when they become available
+        if ('speechSynthesis' in window) {
+            // Load voices immediately if available
+            loadVoices();
+            
+            // Also load when voices change (some browsers load them asynchronously)
+            speechSynthesis.onvoiceschanged = function() {
+                loadVoices();
+                console.log(`Loaded ${availableVoices.length} voices`);
+            };
+            
+            // Force voice loading on some browsers
+            setTimeout(loadVoices, 100);
+        }
+
+        // Initialize the app
+        createNavigation();
+        showLetter('A');
+        
+        // Initialize canvas after a short delay to ensure DOM is ready
+        setTimeout(initCanvas, 100);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9831b72a80ed81d4',t:'MTc1ODU0MzE5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
