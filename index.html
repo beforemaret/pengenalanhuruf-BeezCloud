@@ -98,6 +98,14 @@
         <div class="text-center mb-6 px-2">
             <h1 class="text-3xl md:text-4xl font-bold text-blue-800 mb-2">🎓 Belajar Huruf ABC</h1>
             <p class="text-sm md:text-base text-gray-600">Belajar menulis huruf dengan cara yang menyenangkan!</p>
+            
+            <!-- Mobile Audio Activation Button -->
+            <div id="audioActivation" class="mt-4 md:hidden">
+                <button onclick="activateAudioForMobile()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-semibold text-sm shadow-lg animate-pulse">
+                    🔊 Aktifkan Suara
+                </button>
+                <p class="text-xs text-gray-500 mt-1">Tekan untuk mengaktifkan suara di handphone</p>
+            </div>
         </div>
 
         <!-- Navigation -->
@@ -568,8 +576,10 @@
             }
         }
 
-        // Sound functionality with improved quality
+        // Sound functionality optimized for mobile devices
         let availableVoices = [];
+        let audioInitialized = false;
+        let isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
         function loadVoices() {
             availableVoices = speechSynthesis.getVoices();
@@ -599,38 +609,84 @@
             return null;
         }
 
+        // Initialize audio context for mobile devices
+        function initializeAudio() {
+            if (!audioInitialized && isMobileDevice) {
+                // Create a silent utterance to initialize the speech synthesis
+                const silentUtterance = new SpeechSynthesisUtterance('');
+                silentUtterance.volume = 0;
+                speechSynthesis.speak(silentUtterance);
+                audioInitialized = true;
+                console.log('Audio initialized for mobile device');
+            }
+        }
+
         function playSound(word) {
+            // Initialize audio on first interaction for mobile
+            if (isMobileDevice && !audioInitialized) {
+                initializeAudio();
+            }
+
             if ('speechSynthesis' in window) {
                 // Stop any currently playing speech
                 speechSynthesis.cancel();
                 
-                const utterance = new SpeechSynthesisUtterance(word);
-                
-                // Get the best available voice
-                const bestVoice = getBestVoice();
-                if (bestVoice) {
-                    utterance.voice = bestVoice;
-                    console.log(`Using voice: ${bestVoice.name} (${bestVoice.lang})`);
-                }
-                
-                // Optimize settings for clarity and child-friendliness
-                utterance.lang = bestVoice?.lang || 'id-ID';
-                utterance.rate = 0.7; // Slower for better clarity
-                utterance.pitch = 1.1; // Slightly higher pitch for children
-                utterance.volume = 1.0; // Maximum volume for clarity
-                
-                // Add error handling
-                utterance.onerror = function(event) {
-                    console.error('Speech synthesis error:', event.error);
-                    // Fallback: show word visually
-                    showWordVisually(word);
-                };
-                
-                utterance.onstart = function() {
-                    console.log(`Speaking: ${word}`);
-                };
-                
-                speechSynthesis.speak(utterance);
+                // Small delay to ensure cancellation is processed
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    
+                    // Get the best available voice
+                    const bestVoice = getBestVoice();
+                    if (bestVoice) {
+                        utterance.voice = bestVoice;
+                        console.log(`Using voice: ${bestVoice.name} (${bestVoice.lang})`);
+                    }
+                    
+                    // Optimize settings for mobile devices
+                    utterance.lang = bestVoice?.lang || 'id-ID';
+                    utterance.rate = isMobileDevice ? 0.8 : 0.7; // Slightly faster on mobile
+                    utterance.pitch = 1.1; // Slightly higher pitch for children
+                    utterance.volume = 1.0; // Maximum volume for clarity
+                    
+                    // Mobile-specific optimizations
+                    if (isMobileDevice) {
+                        // Force voice loading on mobile
+                        if (availableVoices.length === 0) {
+                            loadVoices();
+                        }
+                        
+                        // Add extra delay for mobile processing
+                        utterance.onstart = function() {
+                            console.log(`Speaking on mobile: ${word}`);
+                        };
+                    }
+                    
+                    // Add error handling
+                    utterance.onerror = function(event) {
+                        console.error('Speech synthesis error:', event.error);
+                        // Try again with default voice on mobile
+                        if (isMobileDevice && event.error === 'voice-unavailable') {
+                            setTimeout(() => {
+                                const fallbackUtterance = new SpeechSynthesisUtterance(word);
+                                fallbackUtterance.lang = 'id-ID';
+                                fallbackUtterance.rate = 0.8;
+                                fallbackUtterance.pitch = 1.1;
+                                fallbackUtterance.volume = 1.0;
+                                speechSynthesis.speak(fallbackUtterance);
+                            }, 100);
+                        } else {
+                            showWordVisually(word);
+                        }
+                    };
+                    
+                    utterance.onend = function() {
+                        console.log(`Finished speaking: ${word}`);
+                    };
+                    
+                    // Speak the word
+                    speechSynthesis.speak(utterance);
+                    
+                }, isMobileDevice ? 100 : 50);
             } else {
                 // Fallback for browsers that don't support speech synthesis
                 showWordVisually(word);
@@ -649,6 +705,37 @@
             }, 2000);
         }
 
+        // Mobile audio activation function
+        function activateAudioForMobile() {
+            if (isMobileDevice) {
+                // Initialize audio with user interaction
+                initializeAudio();
+                
+                // Test with a short word
+                const testUtterance = new SpeechSynthesisUtterance('Halo');
+                testUtterance.lang = 'id-ID';
+                testUtterance.rate = 0.8;
+                testUtterance.pitch = 1.1;
+                testUtterance.volume = 1.0;
+                
+                testUtterance.onstart = function() {
+                    console.log('Audio activated successfully on mobile');
+                    // Hide the activation button
+                    const activationDiv = document.getElementById('audioActivation');
+                    if (activationDiv) {
+                        activationDiv.style.display = 'none';
+                    }
+                };
+                
+                testUtterance.onerror = function(event) {
+                    console.error('Audio activation failed:', event.error);
+                    alert('Suara tidak dapat diaktifkan. Pastikan volume handphone tidak dalam mode silent.');
+                };
+                
+                speechSynthesis.speak(testUtterance);
+            }
+        }
+
         // Load voices when they become available
         if ('speechSynthesis' in window) {
             // Load voices immediately if available
@@ -662,6 +749,14 @@
             
             // Force voice loading on some browsers
             setTimeout(loadVoices, 100);
+            
+            // Auto-hide activation button on desktop
+            if (!isMobileDevice) {
+                const activationDiv = document.getElementById('audioActivation');
+                if (activationDiv) {
+                    activationDiv.style.display = 'none';
+                }
+            }
         }
 
         // Handle window resize for responsive canvas
@@ -676,5 +771,5 @@
         // Initialize canvas after a short delay to ensure DOM is ready
         setTimeout(initCanvas, 100);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98320aedf0bf5f31',t:'MTc1ODU0NjYyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'983220dd3324fd93',t:'MTc1ODU0NzUyNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
