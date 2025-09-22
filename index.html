@@ -35,26 +35,81 @@
         .example-card:hover {
             transform: translateY(-5px);
         }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .nav-button {
+                width: 2.5rem;
+                height: 2.5rem;
+                font-size: 0.875rem;
+            }
+            
+            .example-card {
+                padding: 1rem;
+            }
+            
+            .example-card h4 {
+                font-size: 1.25rem;
+            }
+            
+            .example-card .text-4xl {
+                font-size: 2rem;
+            }
+            
+            .mobile-stack {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .mobile-center {
+                text-align: center;
+            }
+            
+            .canvas-container {
+                overflow-x: auto;
+            }
+            
+            #writingCanvas {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-button {
+                width: 2.25rem;
+                height: 2.25rem;
+                font-size: 0.75rem;
+            }
+            
+            .example-card {
+                padding: 0.75rem;
+            }
+            
+            .example-card h4 {
+                font-size: 1.125rem;
+            }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-blue-800 mb-2">🎓 Belajar Huruf ABC</h1>
-            <p class="text-gray-600">Belajar menulis huruf dengan cara yang menyenangkan!</p>
+        <div class="text-center mb-6 px-2">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-800 mb-2">🎓 Belajar Huruf ABC</h1>
+            <p class="text-sm md:text-base text-gray-600">Belajar menulis huruf dengan cara yang menyenangkan!</p>
         </div>
 
         <!-- Navigation -->
-        <div class="flex flex-wrap justify-center gap-2 mb-8">
-            <div id="letterNav" class="flex flex-wrap justify-center gap-2">
+        <div class="flex flex-wrap justify-center gap-1 md:gap-2 mb-6 md:mb-8 px-2">
+            <div id="letterNav" class="flex flex-wrap justify-center gap-1 md:gap-2 max-w-full">
                 <!-- Navigation buttons will be generated here -->
             </div>
         </div>
 
         <!-- Main Content -->
-        <div class="max-w-6xl mx-auto">
-            <div id="letterContent" class="bg-white rounded-2xl shadow-xl p-8">
+        <div class="max-w-6xl mx-auto px-2">
+            <div id="letterContent" class="bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-8">
                 <!-- Letter content will be displayed here -->
             </div>
         </div>
@@ -326,62 +381,64 @@
             });
 
             content.innerHTML = `
-                <div class="grid lg:grid-cols-2 gap-8">
+                <div class="grid lg:grid-cols-2 gap-4 md:gap-8">
                     <!-- Left Side: Letter Practice -->
-                    <div class="space-y-6">
+                    <div class="space-y-4 md:space-y-6">
                         <div class="text-center">
-                            <h2 class="text-6xl font-bold text-purple-700 mb-2">${letter}</h2>
-                            <p class="text-gray-600">Huruf ${letter}</p>
+                            <h2 class="text-4xl md:text-6xl font-bold text-purple-700 mb-2">${letter}</h2>
+                            <p class="text-sm md:text-base text-gray-600">Huruf ${letter}</p>
                         </div>
                         
                         <!-- Letter Tracing -->
-                        <div class="bg-gray-50 rounded-xl p-6">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">✏️ Latihan Menulis</h3>
+                        <div class="bg-gray-50 rounded-xl p-4 md:p-6">
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-800 mb-3 md:mb-4">✏️ Latihan Menulis</h3>
                             
                             <!-- Guide Letter -->
-                            <div class="letter-container bg-white rounded-lg p-4 border-2 border-dashed border-gray-300 mb-4">
-                                <svg width="200" height="200" viewBox="0 0 200 200" class="mx-auto">
+                            <div class="letter-container bg-white rounded-lg p-3 md:p-4 border-2 border-dashed border-gray-300 mb-3 md:mb-4">
+                                <svg width="150" height="150" viewBox="0 0 200 200" class="mx-auto md:w-[200px] md:h-[200px]">
                                     <path d="${data.path}" class="dotted-letter"/>
                                     <path d="${data.path}" class="solid-letter"/>
                                 </svg>
-                                <p class="text-center text-sm text-gray-500 mt-2">Contoh bentuk huruf ${letter}</p>
+                                <p class="text-center text-xs md:text-sm text-gray-500 mt-2">Contoh bentuk huruf ${letter}</p>
                             </div>
 
                             <!-- Interactive Writing Area -->
-                            <div class="bg-white rounded-lg p-4 border-2 border-blue-300">
-                                <div class="flex justify-between items-center mb-3">
-                                    <p class="text-sm font-medium text-gray-700">Tulis huruf ${letter} di sini:</p>
-                                    <button onclick="clearCanvas()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium">
+                            <div class="bg-white rounded-lg p-3 md:p-4 border-2 border-blue-300">
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 gap-2">
+                                    <p class="text-xs md:text-sm font-medium text-gray-700 mobile-center">Tulis huruf ${letter} di sini:</p>
+                                    <button onclick="clearCanvas()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs md:text-sm font-medium self-center sm:self-auto">
                                         🗑️ Hapus
                                     </button>
                                 </div>
-                                <canvas 
-                                    id="writingCanvas" 
-                                    width="300" 
-                                    height="200" 
-                                    class="border-2 border-gray-200 rounded-lg mx-auto block cursor-crosshair bg-yellow-50"
-                                    style="touch-action: none;"
-                                ></canvas>
+                                <div class="canvas-container">
+                                    <canvas 
+                                        id="writingCanvas" 
+                                        width="280" 
+                                        height="180" 
+                                        class="border-2 border-gray-200 rounded-lg mx-auto block cursor-crosshair bg-yellow-50 max-w-full"
+                                        style="touch-action: none;"
+                                    ></canvas>
+                                </div>
                                 <p class="text-center text-xs text-gray-500 mt-2">Gunakan mouse atau jari untuk menulis</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Right Side: Examples -->
-                    <div class="space-y-6">
+                    <div class="space-y-4 md:space-y-6">
                         <div class="text-center">
-                            <h3 class="text-2xl font-semibold text-gray-800 mb-4">🎯 Contoh Kata</h3>
-                            <p class="text-gray-600">Kata-kata yang dimulai dengan huruf ${letter}</p>
+                            <h3 class="text-xl md:text-2xl font-semibold text-gray-800 mb-3 md:mb-4">🎯 Contoh Kata</h3>
+                            <p class="text-sm md:text-base text-gray-600">Kata-kata yang dimulai dengan huruf ${letter}</p>
                         </div>
                         
-                        <div class="grid gap-4">
+                        <div class="grid gap-3 md:gap-4">
                             ${data.examples.map(example => `
-                                <div class="example-card bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 border border-yellow-200 shadow-md">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="text-4xl">${example.emoji}</div>
-                                        <div class="flex-1">
-                                            <h4 class="text-2xl font-bold text-gray-800">${example.name}</h4>
-                                            <span class="inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                                <div class="example-card bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-4 md:p-6 border border-yellow-200 shadow-md">
+                                    <div class="flex items-center space-x-3 md:space-x-4 mobile-stack sm:flex-row">
+                                        <div class="text-3xl md:text-4xl flex-shrink-0">${example.emoji}</div>
+                                        <div class="flex-1 min-w-0">
+                                            <h4 class="text-xl md:text-2xl font-bold text-gray-800 truncate">${example.name}</h4>
+                                            <span class="inline-block px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium ${
                                                 example.type === 'hewan' ? 'bg-green-100 text-green-800' :
                                                 example.type === 'buah' ? 'bg-red-100 text-red-800' :
                                                 'bg-blue-100 text-blue-800'
@@ -389,22 +446,24 @@
                                                 ${example.type}
                                             </span>
                                         </div>
-                                        <button onclick="playSound('${example.name}')" class="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full transition-all hover:scale-110 shadow-lg">
-                                            🔊
-                                        </button>
-                                        <div class="text-4xl font-bold text-purple-600">${letter}</div>
+                                        <div class="flex items-center space-x-2 md:space-x-3 flex-shrink-0">
+                                            <button onclick="playSound('${example.name}')" class="bg-blue-500 hover:bg-blue-600 text-white p-2 md:p-3 rounded-full transition-all hover:scale-110 shadow-lg">
+                                                🔊
+                                            </button>
+                                            <div class="text-3xl md:text-4xl font-bold text-purple-600">${letter}</div>
+                                        </div>
                                     </div>
                                 </div>
                             `).join('')}
                         </div>
                         
                         <!-- Navigation Arrows -->
-                        <div class="flex justify-between mt-8">
-                            <button onclick="previousLetter()" class="flex items-center space-x-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-full font-semibold transition-all">
+                        <div class="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 mt-6 md:mt-8">
+                            <button onclick="previousLetter()" class="flex items-center justify-center space-x-2 bg-gray-500 hover:bg-gray-600 text-white px-4 md:px-6 py-2 md:py-3 rounded-full font-semibold transition-all text-sm md:text-base">
                                 <span>←</span>
                                 <span>Sebelumnya</span>
                             </button>
-                            <button onclick="nextLetter()" class="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-semibold transition-all">
+                            <button onclick="nextLetter()" class="flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 md:px-6 py-2 md:py-3 rounded-full font-semibold transition-all text-sm md:text-base">
                                 <span>Selanjutnya</span>
                                 <span>→</span>
                             </button>
@@ -439,9 +498,19 @@
             canvas = document.getElementById('writingCanvas');
             if (!canvas) return;
             
+            // Adjust canvas size for mobile
+            const isMobile = window.innerWidth < 768;
+            if (isMobile) {
+                canvas.width = Math.min(280, window.innerWidth - 60);
+                canvas.height = 160;
+            } else {
+                canvas.width = 300;
+                canvas.height = 200;
+            }
+            
             ctx = canvas.getContext('2d');
             ctx.strokeStyle = '#3b82f6';
-            ctx.lineWidth = 4;
+            ctx.lineWidth = isMobile ? 3 : 4;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
 
@@ -595,6 +664,11 @@
             setTimeout(loadVoices, 100);
         }
 
+        // Handle window resize for responsive canvas
+        window.addEventListener('resize', function() {
+            setTimeout(initCanvas, 100);
+        });
+
         // Initialize the app
         createNavigation();
         showLetter('A');
@@ -602,5 +676,5 @@
         // Initialize canvas after a short delay to ensure DOM is ready
         setTimeout(initCanvas, 100);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9831b72a80ed81d4',t:'MTc1ODU0MzE5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98320aedf0bf5f31',t:'MTc1ODU0NjYyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
